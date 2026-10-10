@@ -1,0 +1,51 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter Notebook temporary files
+.ipynb_checkpoints/
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test and analysis cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Generated model artifacts
+models/*.pkl
+models/*.joblib
+
+# Raw and processed datasets (keep data local)
+data/raw/
+data/processed/
+
+# Generated outputs
+outputs/
+reports/generated/
+
+# Streamlit secrets
+.streamlit/secrets.toml
