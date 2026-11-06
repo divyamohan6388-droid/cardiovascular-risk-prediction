@@ -1,0 +1,2 @@
+numpy pandas scipy scikit-learn matplotlib seaborn jupyter ipykernel
+ucimlrepo
