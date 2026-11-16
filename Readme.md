@@ -1,177 +1,104 @@
 # Reliable and Explainable Machine Learning for Cardiovascular Disease Classification
 
-**An ongoing research-oriented machine learning project exploring predictive performance, model reliability, and interpretability using the UCI Heart Disease dataset.**
-
-![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)
-![Scikit-learn](https://img.shields.io/badge/Scikit--learn-Machine%20Learning-orange?logo=scikitlearn&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Ongoing%20Research-success)
-![Research](https://img.shields.io/badge/Focus-Explainable%20ML-purple)
+An undergraduate research-oriented machine learning project exploring cardiovascular disease classification using statistical analysis, Logistic Regression, model evaluation, and model interpretability.
 
 ## Overview
 
-This project investigates how machine learning models can classify recorded cardiovascular disease status while maintaining a focus on predictive performance, model reliability, and interpretability.
+Machine learning models can identify patterns in medical datasets, but reliable modelling requires more than achieving high predictive performance. Understanding data quality, preventing data leakage, evaluating model stability, and interpreting model behaviour are equally important.
 
-Using the Cleveland subset of the UCI Heart Disease dataset, the project explores data preprocessing, statistical analysis, model comparison, hyperparameter optimisation, feature interpretation, and coefficient stability.
+This project investigates the application of interpretable machine learning to cardiovascular disease classification using the UCI Heart Disease dataset.
 
-Rather than focusing exclusively on predictive accuracy, the research also investigates how preprocessing decisions, model selection, and regularisation influence the behaviour and reliability of machine learning predictions.
+The primary objective is to develop a reproducible machine learning pipeline, evaluate its predictive performance, and examine how different patient characteristics are associated with the model's predictions.
 
-The primary model explored in this project is **Logistic Regression**, with Random Forest used as a comparative model.
+**Project status:** Core modelling, evaluation, and interpretation experiments completed. Further validation and analysis remain future work.
 
 ## Research Objectives
 
-The main objectives are:
-
-- Investigate the structure, quality, and statistical characteristics of cardiovascular health-related data.
-- Examine missing-data handling and feature preprocessing strategies.
-- Develop reproducible machine learning pipelines with appropriate leakage prevention.
-- Compare Logistic Regression and Random Forest using stratified cross-validation.
-- Investigate the impact of regularisation through hyperparameter optimisation.
-- Interpret model coefficients and odds ratios.
-- Examine coefficient stability through bootstrap resampling.
-- Investigate how modelling choices affect feature-level interpretations.
-
-## Research Questions
-
-1. How do preprocessing and missing-value handling strategies influence model performance?
-2. How does Logistic Regression compare with Random Forest on a small cardiovascular dataset?
-3. How consistent are model evaluation metrics across cross-validation folds?
-4. Does hyperparameter tuning meaningfully improve predictive performance?
-5. Which input features exhibit stronger associations with the model's predictions?
-6. How stable are Logistic Regression coefficients under bootstrap resampling?
-7. How sensitive are feature interpretations to regularisation strength?
+- Explore the dataset and examine relationships between clinical attributes and recorded disease status.
+- Investigate missing values, feature distributions, and class balance.
+- Develop a leakage-aware preprocessing and classification pipeline.
+- Evaluate Logistic Regression using stratified cross-validation.
+- Compare Logistic Regression with Random Forest as a baseline alternative.
+- Investigate model selection through hyperparameter tuning.
+- Interpret model coefficients using odds ratios.
+- Examine coefficient uncertainty through bootstrap resampling.
+- Assess the sensitivity of model coefficients to regularisation strength.
 
 ## Dataset
 
-**Source:** UCI Machine Learning Repository — Heart Disease Dataset
+**Source:** [UCI Machine Learning Repository – Heart Disease Dataset](https://archive.ics.uci.edu/dataset/45/heart+disease)
 
-Dataset: https://archive.ics.uci.edu/dataset/45/heart+disease
-
-The project uses the Cleveland subset of the dataset.
+The project uses the Cleveland subset of the UCI Heart Disease dataset.
 
 | Property | Description |
 |---|---|
-| Total observations | 303 |
+| Observations | 303 |
 | Input features | 13 |
 | Original target | `num` |
-| Missing values | 6 |
-| Classification type | Binary classification |
-| Positive class | Recorded disease status (`num > 0`) |
+| Binary target | 0 or 1 |
+| Missing values | 6 cells |
+| Classification task | Binary classification |
 
-### Target Definition
+The original target variable contains values from 0 to 4. For this project, it is converted into a binary target:
 
-The original target variable contains values from 0 to 4.
-
-For binary classification, the target is transformed as follows:
-
-- `0`: No recorded disease (`num = 0`)
+- `0`: No recorded disease
 - `1`: Recorded disease (`num > 0`)
 
-The resulting target distribution is:
-
-| Class | Observations | Percentage |
-|---|---:|---:|
-| 0 | 164 | 54.13% |
-| 1 | 139 | 45.87% |
-
-### Input Features
-
-The dataset contains 13 predictors:
-
-| Feature | Description |
-|---|---|
-| age | Age |
-| sex | Sex |
-| cp | Chest pain type |
-| trestbps | Resting blood pressure |
-| chol | Serum cholesterol |
-| fbs | Fasting blood sugar |
-| restecg | Resting electrocardiographic results |
-| thalach | Maximum heart rate achieved |
-| exang | Exercise-induced angina |
-| oldpeak | ST depression induced by exercise |
-| slope | Slope of the peak exercise ST segment |
-| ca | Number of major vessels |
-| thal | Thalassemia-related category |
+**Important:** This target represents recorded disease status in the dataset. The model is not designed to predict future cardiovascular risk, provide a clinical diagnosis, or replace medical assessment.
 
 ## Methodology
 
-The project follows a structured machine learning workflow.
-
 ### 1. Exploratory Data Analysis
 
-- Dataset structure and statistical summaries.
-- Missing-value investigation.
-- Target distribution analysis.
-- Feature distribution analysis.
-- Outlier investigation.
-- Categorical feature analysis.
-- Statistical association testing using the Chi-square test.
+The initial analysis examined:
 
-A significant association was observed between chest pain type (`cp`) and binary disease status:
+- Dataset structure and descriptive statistics.
+- Missing-value distribution.
+- Numerical and categorical feature distributions.
+- Binary target distribution.
+- Associations between selected features and the target.
+
+A chi-square test was conducted to investigate the association between chest pain type (`cp`) and the binary target.
+
+The analysis found a statistically significant association:
 
 - Chi-square statistic: 81.816
 - Degrees of freedom: 3
 - p-value: 1.25171 × 10⁻¹⁷
 
-This indicates an association in the analysed dataset, not causation.
+This indicates an association within the dataset, not a causal relationship.
 
 ### 2. Data Preprocessing
 
-Missing values are handled within Scikit-learn pipelines.
+The dataset was divided using an 80:20 stratified train-test split with `random_state=42`.
 
-**Numerical features:**
-- Median imputation.
-- StandardScaler normalisation.
-
-**Categorical features:**
-- Most-frequent imputation.
-- One-hot encoding.
-
-An alternative missing-category imputation strategy was also investigated.
-
-The alternative strategy produced similar cross-validation results, with no meaningful improvement over the baseline approach.
-
-### 3. Train-Test Split
-
-The dataset is divided using stratified sampling:
-
-| Split | Observations |
+| Dataset | Observations |
 |---|---:|
-| Training | 242 |
-| Testing | 61 |
+| Training set | 242 |
+| Testing set | 61 |
 
-Configuration:
-- Test size: 20%
-- Random state: 42
-- Stratification: Enabled
+A Scikit-learn preprocessing pipeline was implemented.
 
-The held-out test set is reserved for final evaluation.
+**Numerical features**
+- Median imputation
+- Standard scaling
 
-### 4. Model Development
+**Categorical features**
+- Most-frequent-value imputation
+- One-hot encoding with unknown-category handling
 
-Two classification algorithms were investigated:
+Preprocessing was incorporated into the modelling pipeline to prevent information leakage during cross-validation.
 
-**Logistic Regression**
+### 3. Model Development and Evaluation
 
-Used as the primary model because of its interpretability and suitability as a classification baseline.
+Two classification algorithms were evaluated:
 
-**Random Forest**
+- Logistic Regression
+- Random Forest
 
-Used as a comparative model to examine whether a tree-based ensemble provides improved predictive performance.
+Both models were evaluated using five-fold stratified cross-validation.
 
-Both models were evaluated using the same preprocessing strategy and five-fold stratified cross-validation.
-
-### 5. Model Evaluation
-
-The following metrics were considered:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- ROC-AUC
-
-Cross-validation results:
+#### Cross-validation results
 
 | Metric | Logistic Regression | Random Forest |
 |---|---:|---:|
@@ -181,59 +108,58 @@ Cross-validation results:
 | F1-score | 0.825 ± 0.007 | 0.796 ± 0.036 |
 | ROC-AUC | 0.902 ± 0.014 | 0.894 ± 0.033 |
 
-Logistic Regression achieved higher mean accuracy, precision, F1-score, and ROC-AUC. Random Forest achieved slightly higher mean recall.
+Logistic Regression achieved stronger mean accuracy, precision, F1-score, and ROC-AUC, while Random Forest achieved slightly higher mean recall.
 
-Logistic Regression also demonstrated lower fold-to-fold standard deviations across the reported metrics.
+Logistic Regression also showed lower fold-to-fold variability across the reported metrics.
 
-### 6. Hyperparameter Optimisation
+Based on these results, Logistic Regression was selected for further analysis.
 
-GridSearchCV was used to investigate the Logistic Regression regularisation parameter `C`.
+### 4. Hyperparameter Tuning
 
-Values tested:
+GridSearchCV was used to investigate the regularisation parameter `C` for Logistic Regression.
 
-`[0.001, 0.01, 0.1, 1, 10, 100]`
+The search evaluated:
 
-Best configuration:
+`C = [0.001, 0.01, 0.1, 1, 10, 100]`
 
-- Best C: 1
-- Cross-validation ROC-AUC: 0.90249
+The selection criterion was ROC-AUC using five-fold stratified cross-validation.
 
-The default regularisation strength was already the best among the tested configurations. Hyperparameter tuning did not produce a meaningful improvement over the original baseline.
+**Best parameter:** `C = 1`
 
-### 7. Final Test Evaluation
+**Best mean cross-validation ROC-AUC:** 0.9025
 
-The selected Logistic Regression model was evaluated on the untouched test set.
+The selected model was subsequently evaluated on the held-out test set.
 
-| Metric | Test Performance |
+#### Final held-out test performance
+
+| Metric | Score |
 |---|---:|
-| Accuracy | 88.52% |
-| Precision | 83.87% |
-| Recall | 92.86% |
-| F1-score | 88.14% |
-| ROC-AUC | 96.65% |
+| Accuracy | 0.885 |
+| Precision | 0.839 |
+| Recall | 0.929 |
+| F1-score | 0.881 |
+| ROC-AUC | 0.966 |
 
-**Confusion Matrix**
+**Confusion matrix**
 
-| | Predicted 0 | Predicted 1 |
+| | Predicted: 0 | Predicted: 1 |
 |---|---:|---:|
-| Actual 0 | 28 | 5 |
-| Actual 1 | 2 | 26 |
+| Actual: 0 | 28 | 5 |
+| Actual: 1 | 2 | 26 |
 
-The model correctly classified 54 out of 61 test observations.
+The held-out test set was not used for hyperparameter selection.
 
-These results represent performance on one held-out split and should not be interpreted as evidence of equivalent performance on external populations.
+These results are internal estimates from a relatively small dataset. Independent external validation is required before drawing conclusions about performance on other populations.
 
-## Model Interpretability and Explainability
+### 5. Model Interpretability
 
-The project investigates how Logistic Regression produces its predictions through coefficient analysis and odds ratios.
+Logistic Regression was selected partly because its coefficients provide a relatively interpretable representation of how input features relate to the model's predicted class.
 
-### 1. Numerical Feature Interpretation
+Two coefficient analyses were conducted using separately fitted models.
 
-Numerical feature coefficients were extracted after standardisation.
+**Numerical feature analysis**
 
-The corresponding odds ratios were calculated using the exponential transformation of the coefficients.
-
-Selected results:
+Numerical predictors were standardised before fitting. Their odds ratios therefore represent the change in modelled odds associated with a one-standard-deviation increase in the corresponding feature.
 
 | Feature | Odds Ratio |
 |---|---:|
@@ -243,13 +169,11 @@ Selected results:
 | age | 0.941 |
 | thalach | 0.689 |
 
-Since numerical features are standardised, these odds ratios represent a one-standard-deviation increase in the corresponding predictor, holding other model inputs constant.
+**Categorical feature analysis**
 
-### 2. Categorical Feature Interpretation
+A separate reference-category model was fitted using one-hot encoding with the first category dropped.
 
-A separate interpretation pipeline using reference-category one-hot encoding was developed.
-
-Selected odds ratios:
+Some of the resulting odds ratios were:
 
 | Feature | Odds Ratio |
 |---|---:|
@@ -259,46 +183,70 @@ Selected odds ratios:
 | thal_7.0 | 3.531 |
 | sex_1.0 | 3.392 |
 | ca_3.0 | 3.046 |
+| slope_2.0 | 2.229 |
+| exang_1.0 | 1.587 |
 
-These values compare each category with its respective reference category, holding other model inputs constant.
+Categorical odds ratios are relative to the corresponding omitted reference categories.
 
-### 3. Feature Coefficient Visualisation
+These numerical and categorical results come from two separately fitted models and should not be interpreted as coefficients from one shared model.
 
-Coefficient visualisations were developed to examine positive and negative model associations across numerical and categorical predictors.
+Odds ratios describe model associations, not causal effects or clinical importance.
 
-These visualisations help investigate the contribution of individual transformed features to the model's linear predictions.
+### 6. Bootstrap Uncertainty Analysis
 
-### 4. Bootstrap Coefficient Stability
+Bootstrap resampling was used to examine the variability of Logistic Regression coefficients.
 
-A bootstrap experiment was conducted to investigate the stability of Logistic Regression coefficients.
+The analysis involved:
 
-Configuration:
+- 300 bootstrap resamples.
+- Sampling with replacement from the training set.
+- A fixed sample size of 242 observations per resample.
+- Consistent feature ordering across fitted models.
+- Estimation of coefficient means, standard deviations, percentile intervals, and positive-coefficient frequencies.
 
-- Training observations: 242
-- Bootstrap repetitions: 300
-- Sampling method: Sampling with replacement
-- Model: Logistic Regression
-- Regularisation: C = 1
+Seven categorical features had bootstrap percentile intervals entirely above zero:
 
-The experiment produced the following summary:
+- `ca_1.0`
+- `ca_2.0`
+- `cp_4.0`
+- `thal_7.0`
+- `sex_1.0`
+- `ca_3.0`
+- `slope_2.0`
 
-| Stability classification | Number of features |
-|---|---:|
-| Consistently positive | 7 |
-| Intervals crossing or touching zero | 13 |
-| Consistently negative | 0 |
+The intervals provide an indication of coefficient sampling variability under the chosen resampling procedure. They should not be treated as definitive statistical significance tests or evidence of causality.
 
-The following features maintained positive coefficient directions across all 300 bootstrap samples:
+The 300-resample analysis is exploratory; a larger number of resamples could provide more stable interval estimates.
 
-- ca_1.0
-- ca_2.0
-- cp_4.0
-- thal_7.0
-- sex_1.0
+### 7. Regularisation Sensitivity Analysis
 
-The analysis suggests that coefficient stability varies across predictors.
+The final analysis investigated how Logistic Regression coefficients changed across different regularisation strengths.
 
-Bootstrap percentile intervals were used to examine uncertainty. These intervals are not definitive statistical significance tests.
+The following values were evaluated:
+
+`C = [0.01, 0.1, 1, 10, 100]`
+
+The analysis examined:
+
+- Changes in coefficient magnitude.
+- Stability of coefficient direction.
+- Features whose coefficients changed sign.
+- The effect of stronger and weaker regularisation.
+
+Some feature coefficients maintained their direction across the tested values, while others changed direction.
+
+This analysis highlights the sensitivity of coefficient interpretation to regularisation and the possible influence of relationships between predictors.
+
+It is a coefficient sensitivity analysis, not an additional model-validation experiment.
+
+## Key Findings
+
+1. Logistic Regression provided stronger overall cross-validation performance than the Random Forest baseline on this dataset.
+2. The selected Logistic Regression model achieved a held-out ROC-AUC of approximately 0.966.
+3. The preprocessing pipeline handled missing values and scaling within the cross-validation workflow.
+4. Coefficient-based analysis provided an interpretable view of modelled feature associations.
+5. Bootstrap resampling revealed variation in coefficient estimates across training-set resamples.
+6. Regularisation sensitivity analysis demonstrated that coefficient direction and magnitude are not equally stable across all predictors.
 
 ## Repository Structure
 
@@ -320,140 +268,97 @@ cardiovascular-risk-prediction/
 └── requirements.txt
 ```
 
-Note: The raw dataset is excluded from version control through `.gitignore`. Obtain it from the UCI source and place it in `data/raw/` before running the notebooks.
+The raw dataset is excluded from version control through `.gitignore`.
 
-## Getting Started
+## Technologies and Libraries
 
-### 1. Clone the repository
+- Python
+- NumPy
+- Pandas
+- SciPy
+- Scikit-learn
+- Matplotlib
+- Seaborn
+- Jupyter Notebook
+- ucimlrepo
+
+## Reproducibility
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/divyamohan6388-droid/cardiovascular-risk-prediction.git
-```
-
-### 2. Navigate to the project
-
-```bash
 cd cardiovascular-risk-prediction
 ```
 
-### 3. Create a virtual environment
+Create and activate a virtual environment:
 
 ```bash
 python -m venv venv
 ```
 
-Activate it:
-
-Windows:
+On Windows:
 
 ```bash
 venv\Scripts\activate
 ```
 
-Linux/macOS:
-
-```bash
-source venv/bin/activate
-```
-
-### 4. Install dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Download the dataset
+Launch Jupyter Notebook:
 
-Obtain the Cleveland Heart Disease dataset from the UCI Machine Learning Repository and place the prepared CSV file at:
+```bash
+jupyter notebook
+```
+
+Run the notebooks in numerical order, beginning with dataset exploration.
+
+The raw dataset must be obtained from the UCI Machine Learning Repository and placed at:
 
 ```text
 data/raw/heart_disease_data.csv
 ```
-
-### 6. Run the notebooks
-
-Execute the notebooks in numerical order:
-
-1. `01_dataset_exploration.ipynb`
-2. `02_data_preprocessing.ipynb`
-3. `03_model_training_and_evaluation.ipynb`
-4. `04_model_interpretation.ipynb`
-
-Run each notebook from top to bottom.
-
-## Current Project Progress
-
-**Project status: Ongoing Research**
-
-| Component | Status |
-|---|---|
-| Dataset exploration and statistical analysis | Completed |
-| Missing-value investigation | Completed |
-| Data preprocessing pipelines | Completed |
-| Logistic Regression baseline | Completed |
-| Random Forest comparison | Completed |
-| Five-fold cross-validation | Completed |
-| Hyperparameter optimisation | Completed |
-| Final held-out test evaluation | Completed |
-| Numerical coefficient and odds ratio analysis | Completed |
-| Categorical coefficient and odds ratio analysis | Completed |
-| Feature coefficient visualisation | Completed |
-| Bootstrap coefficient stability analysis | Completed |
-| Regularisation sensitivity analysis | In progress |
-| Final research conclusions and documentation | Pending |
-
-## Future Work
-
-Planned research directions include:
-
-- Complete regularisation sensitivity analysis.
-- Examine the robustness of feature-level interpretations.
-- Investigate limitations associated with small datasets.
-- Consolidate findings across preprocessing, model comparison, and interpretability experiments.
-- Improve research documentation and visualisations.
-- Explore further validation strategies where appropriate.
 
 ## Limitations
 
 This project has several limitations:
 
 - The dataset contains only 303 observations.
-- The analysis uses the Cleveland subset rather than a large, diverse external population.
-- The evaluation relies on one stratified train-test split and five-fold cross-validation.
-- Bootstrap analysis uses 300 resamples.
-- Model coefficients can be affected by correlated predictors, regularisation, and encoding choices.
-- Observational associations do not establish causality.
+- The analysis uses a single dataset subset.
+- The held-out test set is relatively small.
+- Internal validation does not establish generalisation to other hospitals or populations.
+- Model coefficients can be sensitive to regularisation and correlated predictors.
+- Bootstrap intervals are based on a limited number of resamples.
+- The binary target represents recorded disease status, not future disease development.
+- The model has not undergone clinical validation or deployment.
 
-**This project is intended for educational and research purposes. It is not a clinical diagnostic system and must not be used for medical decision-making.**
+Consequently, the reported results should be understood as an exploratory machine learning analysis rather than evidence of clinical readiness.
 
-## Technologies Used
+## Future Work
 
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- SciPy
-- Matplotlib
-- Seaborn
-- Jupyter Notebook
-- Git and GitHub
+Potential extensions include:
 
-## Research Focus
-
-**Machine Learning | Data Science | Statistical Analysis | Model Evaluation | Explainable AI | Model Reliability**
-
----
+- External validation using independent cardiovascular datasets.
+- Calibration analysis to assess the reliability of predicted probabilities.
+- Increasing bootstrap repetitions for more stable uncertainty estimates.
+- Further investigation of coefficient stability and predictor relationships.
+- Evaluation of model uncertainty and generalisation across different data distributions.
+- Improving reproducibility and documenting the complete experimental environment.
 
 ## Author
 
-**Divya Mohan**
+**Undergraduate Student – Computer Science and Data Analytics**
 
-Undergraduate Student — BS Computer Science and Data Analytics, IIT Patna
+Indian Institute of Technology Patna
 
-GitHub: https://github.com/divyamohan6388-droid
+Research interests: Data Science, Statistics, Machine Learning, and Artificial Intelligence.
 
-LinkedIn: https://www.linkedin.com/in/divya-mohan-a42b12389/
+GitHub: [divyamohan6388-droid](https://github.com/divyamohan6388-droid)
 
 ---
 
-*This repository documents an ongoing research-oriented machine learning project. Results, experiments, and documentation will be updated as the investigation progresses.*
+*This is an independent undergraduate research-oriented project developed for educational and exploratory purposes. It is not a clinically validated diagnostic system.*
